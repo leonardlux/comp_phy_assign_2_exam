@@ -216,12 +216,45 @@ def plot_euler_forward(x,ev_euler,ts,filename,dt=1e-3,):
     plt.legend()
     plt.savefig(filename)
 
-def plot_euler_forward_norm(ev_eulers,labels,dts,filename,):
+def plot_euler_forward_norm(ev_eulers,labels,dts,ts,filename,):
+    norms = np.zeros((len(ev_eulers),len(ts)))
+    for i, ev_euler in enumerate(ev_eulers):
+        for j,t in enumerate(ts):
+            norms[i,j] = np.linalg.norm(ev_euler[t])
+
     plt.figure(figsize=(6,5))
-    for ev_euler,labels,dt in zip(ev_eulers,labels,dts):
-        plt.plot(dt*np.arange(ev_euler.shape[0]),np.real(ev_euler.real,axis=1),marker="o",label=f"t'={dt*t:.2f}")
-    plt.xlabel("$x'$", fontsize=18)
-    plt.ylabel("$Re(\phi_1)_{euler}$ ", fontsize=18)
+    for i,norm in enumerate(norms):
+        plt.plot(np.array(ts)*dts[i],(norm),label=labels[i],marker="o")
+    
+
+    plt.xlabel("$t'$", fontsize=18)
+    plt.yscale("log")
+    plt.ylabel("$||\phi_{1,euler}||$ ", fontsize=18)
+    plt.legend()
+    plt.savefig(filename)
+
+
+def plot_euler_forward_norm_relation(ev_eulers,labels,dts,ts,filename,):
+    norms = np.zeros((len(ev_eulers),len(ts)))
+    for i, ev_euler in enumerate(ev_eulers):
+        for j,t in enumerate(ts):
+            norms[i,j] = np.linalg.norm(ev_euler[t])
+
+    plt.figure(figsize=(6,5))
+    
+    # predicitons 
+    a_s = []
+    for i,norm in enumerate(norms):
+        t = np.array(ts)*dts[i]
+        a = (np.log(norm[-1]) - np.log(norm[0]))/ (t[-1]-t[0])
+        a_s.append(a)
+        
+    plt.plot(dts,a_s,marker="o")
+
+    plt.xlabel("$\Delta t'$", fontsize=18)
+    plt.ylabel("$a$ ", fontsize=18)
+    plt.xscale("log")
+    plt.yscale("log")
     plt.legend()
     plt.savefig(filename)
 

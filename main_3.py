@@ -172,29 +172,40 @@ def main():
     
     # plot roots against v_0
 
-    v_0s            = [10,20,25,1e2,1e3,1e4,1e5]
-    amount_of_roots = [0, 0, 1,  2,  6, 22, 68]
-    pltools.plot_v_0_f_roots(v_0s, amount_of_roots,fn("v_0_roots_f"))
+    if False or calc_all:
+        v_0s            = [10,20,25,1e2,1e3,1e4,1e5]
+        amount_of_roots = [0, 0, 1,  2,  6, 22, 68]
+        pltools.plot_v_0_f_roots(v_0s, amount_of_roots,fn("v_0_roots_f"))
 
 
-    # Euler forwards for task 3.7
-    # simple case
+        # Euler forwards for task 3.7
+        # simple case
+        ts = [10,200,400,600,1000,1500, 2000]
+        ev_euler = sim.euler_forward(basic_sim,dt=1e-6,n_t=1e5)
+        pltools.plot_euler_forward(basic_sim.x,ev_euler,ts,fn("euler_forward"),dt=1e-3,)
+
+        dts = [1e-3,1e-4,1e-5,1e-6,1e-7][:]
+        names = ["3","4","5","6","7"][:]
+        labels = [f"$\\Delta t = 10^{name}$" for name in names]
+        ev_eulers = []
+        for dt,name in zip(dts,names):
+            ev_euler = sim.euler_forward(basic_sim,dt=dt,n_t=1e5)
+            pltools.plot_euler_forward(basic_sim.x,ev_euler,ts,fn(f"euler_forward_{name}"),dt=dt)
+            ev_eulers.append(ev_euler)
+
+        # norm over time would be quit nice but not as usefule and harder to implement correctly
+        pltools.plot_euler_forward_norm(ev_eulers,labels,ts=ts,filename=fn("euler_forward_norm"),dts=dts)
+
+        pltools.plot_euler_forward_norm_relation(ev_eulers,labels,ts=ts,filename=fn("euler_forward_norm_relation"),dts=dts)
+
+
+
     ts = [10,200,400,600,1000,1500, 2000]
-    ev_euler = sim.euler_forward(basic_sim,dt=1e-6,n_t=1e5)
-    pltools.plot_euler_forward(basic_sim.x,ev_euler,ts,fn("euler_forward"),dt=1e-3,)
+    dt = 1 
+    ev_cn = sim.crank_nicholson(basic_sim,dt=dt,n_t=2e3+1)
+    pltools.plot_euler_forward(basic_sim.x,ev_cn,ts,fn("crank_nicholson"),dt=dt,)
 
-    dts = [1e-3,1e-4,1e-5,1e-6,1e-7]
-    names = ["3","4","5","6","7"]
-    labels = [f"$\\Delta t = 10^{name}$" for name in names]
-    ev_eulers = []
-    for dt,name in zip(dts,names):
-        ev_euler = sim.euler_forward(basic_sim,dt=dt,n_t=1e6)
-        pltools.plot_euler_forward(basic_sim.x,ev_euler,ts,fn(f"euler_forward_{name}"),dt=dt,)
-        ev_eulers.append(ev_euler)
-
-    pltools.plot_euler_forward_norm(ev_eulers,labels,filename=fn("euler_forward_norm"),dts=dts)
-
-    # plot norm over time 
+ 
 
 
     # how to test for CFL 

@@ -214,10 +214,25 @@ def euler_forward(sim,dt=1e-3, n_t = 1e4):
     # we are only interested in showing the evolution of the real part
     n_t = int(n_t)
     ev_euler = np.zeros((n_t,len( sim.eig_vectors[1])),dtype=np.complex128)
-    ev_euler[0] = sim.eig_vectors[1]
+    ev_euler[0] = sim.eig_vectors[1]/np.linalg.norm(sim.eig_vectors[1])
     for i in range(1, n_t):
          ev_euler[i] = (1-1j*dt*sim.eig_values[1]) * ev_euler[i-1] 
     return ev_euler
+
+def crank_nicholson(sim,dt=1e-3,n_t=1e3):
+    # crank nicholson scheme
+    n_t = int(n_t)
+    ev_cn = np.zeros((n_t,len( sim.eig_vectors[1])),dtype=np.complex128)
+    ev_cn[0] = sim.eig_vectors[1]/np.linalg.norm(sim.eig_vectors[1])
+
+    A = (1 +1j * dt * sim.eig_values[1]/2) * np.eye(len( sim.eig_vectors[1]))
+    B = (1 -1j * dt * sim.eig_values[1]/2) * np.eye(len( sim.eig_vectors[1]))
+
+    for i in range(1, n_t):
+        u_ = np.dot(B, ev_cn[i-1,:])
+        ev_cn[i] = np.linalg.solve(A, u_)
+
+    return ev_cn
 
 
 # collections
