@@ -4,7 +4,7 @@ import plot_tools as pltools
 from collections import namedtuple
 # this time a more funcitonal orientated approach
 
-calc_all = False
+calc_all = True
 
 def fn(name):
     plt_dir = "images_3/"

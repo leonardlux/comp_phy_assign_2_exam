@@ -1,1 +1,5 @@
-In case that not everything is calculated set calc_all variable to True
+In case that not everything is calculated set calc_all variable to True.
+
+And in main_3 you need to uncomment line 67 
+    #n_points = 501
+to get the correct results for the roots as described in the report.
